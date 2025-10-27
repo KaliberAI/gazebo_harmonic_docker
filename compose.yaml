@@ -1,13 +1,13 @@
 services:
-  ros2_jammy_sim:
+  ros2_shell:
     build:
-      context: ./docker_simulator/DockerFiles
+      context: ./DockerFiles
       dockerfile: Dockerfile
       args:
         - BASE_IMAGE=osrf/ros
         - BASE_TAG=jazzy-desktop-full
         - DISTRO=jazzy
-        - IMAGE_NAME=docker_control_simulation
+        - IMAGE_NAME=gazebo_harmonic
         - IMAGE_TAG=0.1
         - WORKSPACE=docker_simulation_ws
 
@@ -42,15 +42,12 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ~/.bash_history:/home/ros/.bash_history
-      - ./docker_simulator:/home/ros/docker_simulation_ws
+      - ./ros2_ws:/home/ros/docker_simulation_ws
       - /dev/input:/dev/input
       - /dev/dri:/dev/dri
       - /dev/nvidia0:/dev/nvidia0
       - /dev/nvidiactl:/dev/nvidiactl
       - /dev/nvidia-modeset:/dev/nvidia-modeset
-      
-      
-      
 
     # Command to source ROS2 environment and start shell
     command: >
@@ -76,4 +73,3 @@ services:
 networks:
   ros2_internal:
     driver: bridge
-    
