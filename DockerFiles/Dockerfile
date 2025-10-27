@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=osrf/ros
-ARG BASE_TAG= jazzy-desktop-full
+ARG BASE_TAG=jazzy-desktop-full
 
 FROM ${BASE_IMAGE}:${BASE_TAG}
 
@@ -7,10 +7,9 @@ FROM ${BASE_IMAGE}:${BASE_TAG}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV GZ_VERSION=harmonic
 ## arg ros2 distro 
-ARG DISTRO=humble
+ARG DISTRO=jazzy
 # RUN is used to execute and add new layer on top of the base immage
 RUN apt-get update 
-
 
 RUN apt-get install -y ros-${DISTRO}-plotjuggler
 RUN apt-get install -y ros-${DISTRO}-ros-gz
@@ -26,8 +25,20 @@ RUN apt-get install -y \
     ros-${DISTRO}-xacro \
     ros-${DISTRO}-rosbag2-storage-mcap \
     ros-${DISTRO}-plotjuggler-ros \
+    ros-${DISTRO}-moveit-ros-move-group \
+    ros-${DISTRO}-moveit-kinematics \
+    ros-${DISTRO}-moveit-planners \
+    ros-${DISTRO}-moveit-simple-controller-manager \
+    ros-${DISTRO}-moveit-configs-utils \
+    ros-${DISTRO}-moveit-ros-visualization \
+    ros-${DISTRO}-moveit-ros-warehouse \
+    ros-${DISTRO}-moveit-setup-assistant \
+    ros-${DISTRO}-ament-clang-format \
+    ros-${DISTRO}-ament-clang-tidy \
+    ros-${DISTRO}-ros2-controllers-test-nodes \
     pipx \
     chrony \
+    vim \
     tmux python3-pip\
     xterm \
     libeigen3-dev \
@@ -41,13 +52,13 @@ RUN apt-get install -y \
 RUN apt-get install -y \
     ros-${DISTRO}-rmw-cyclonedds-cpp \
     && apt-get clean
-RUN apt-get install -y  curl lsb-release gnupg
+RUN apt-get install -y curl lsb-release gnupg
 RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg 
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 RUN echo " CURL DONE"
 
-RUN   apt-get update 
-RUN  apt-get install -y gz-harmonic
+RUN apt-get update 
+RUN apt-get install -y gz-harmonic
 RUN echo "Ignition Installed"
 RUN apt-get update
 RUN apt-get upgrade -y
@@ -94,16 +105,19 @@ RUN pipx install numpy
 # RUN echo " CURL DONE"
 
 # Set up auto-source of workspace for ros user
-ARG WORKSPACE=docker_navigation
+ARG WORKSPACE=docker_simulation_ws
 WORKDIR /home/ros/${WORKSPACE}
 RUN sudo usermod -a -G render,avahi,video ${USERNAME}
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 
 RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> /home/ros/.bashrc
-RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/humble/lib/" >> ~/.bashrc
+RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
 RUN sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 
+# Copy custom entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN sudo chmod +x /entrypoint.sh
 
-ENTRYPOINT ["/ros_entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 # RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 # RUN echo "source /home/ros/ros2_ws/install/setup.bash 2>/dev/null || true" >> ~/.bashrc
