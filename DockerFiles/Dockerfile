@@ -104,20 +104,30 @@ RUN pipx install numpy
 # RUN sudo curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpgecho "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
 # RUN echo " CURL DONE"
 
-# Set up auto-source of workspace for ros user
+# Auto source Eigen
+RUN sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
+
+# Set up auto-source for ros user
 ARG WORKSPACE=docker_simulation_ws
 WORKDIR /home/ros/${WORKSPACE}
 RUN sudo usermod -a -G render,avahi,video ${USERNAME}
-RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
-
-RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> /home/ros/.bashrc
-RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
-RUN sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 
 # Copy custom entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN sudo chmod +x /entrypoint.sh
 
+# Copy Cyclone DDS configuration file
+COPY cyclonedds_profile_melfa.xml /home/ros/cyclonedds_profile_melfa.xml
+RUN sudo chmod 644 /home/ros/cyclonedds_profile_melfa.xml
+
+# Copy and auto source ros2_config_melfa.sh to .bashrc
+COPY ros2_config_melfa.sh /home/ros/ros2_config_melfa.sh
+RUN echo "source /home/ros/ros2_config_melfa.sh" >> /home/ros/.bashrc
+
+# Auto source workspace
+RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> /home/ros/.bashrc
+
+# Export GZ_SIM_SYSTEM_PLUGIN_PATH
+RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> /home/ros/.bashrc
+
 ENTRYPOINT ["/entrypoint.sh"]
-# RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
-# RUN echo "source /home/ros/ros2_ws/install/setup.bash 2>/dev/null || true" >> ~/.bashrc
