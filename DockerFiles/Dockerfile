@@ -104,6 +104,18 @@ RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
 RUN sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 
 
+# Copy custom entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN sudo chmod +x /entrypoint.sh
+
+# Copy Cyclone DDS configuration file
+COPY cyclonedds_profile_melfa.xml /home/ros/cyclonedds_profile_melfa.xml
+RUN sudo chmod 644 /home/ros/cyclonedds_profile_melfa.xml
+
+# Copy and auto source ros2_config_melfa.sh to .bashrc
+COPY ros2_config_melfa.sh /home/ros/ros2_config_melfa.sh
+RUN echo "source /home/ros/ros2_config_melfa.sh" >> /home/ros/.bashrc
+
 ENTRYPOINT ["/entrypoint.sh"]
 # RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 # RUN echo "source /home/ros/ros2_ws/install/setup.bash 2>/dev/null || true" >> ~/.bashrc
