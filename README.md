@@ -10,16 +10,6 @@ Install Nvidia Driver: TODO
 
 Nvidia-Container-Toolkit: follow the nvidia-container-toolkit following [this](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
-## Submodules
-
-To initialize and update all the required git submodules for this repository, run the following commands in your project root directory:
-
-```bash
-git submodule update --init --recursive
-```
-
-This will clone and initialize any submodules (external dependencies or components) listed in the `.gitmodules` file into the expected locations.
-
 ## Build 
 
 ``` bash compose_build.bash ```
