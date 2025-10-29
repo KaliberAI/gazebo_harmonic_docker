@@ -1,5 +1,5 @@
 ARG BASE_IMAGE=osrf/ros
-ARG BASE_TAG= jazzy-desktop-full
+ARG BASE_TAG=jazzy-desktop-full
 
 FROM ${BASE_IMAGE}:${BASE_TAG}
 
@@ -7,7 +7,7 @@ FROM ${BASE_IMAGE}:${BASE_TAG}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV GZ_VERSION=harmonic
 ## arg ros2 distro 
-ARG DISTRO=humble
+ARG DISTRO=jazzy
 # RUN is used to execute and add new layer on top of the base immage
 RUN apt-get update 
 
@@ -94,16 +94,16 @@ RUN pipx install numpy
 # RUN echo " CURL DONE"
 
 # Set up auto-source of workspace for ros user
-ARG WORKSPACE=docker_navigation
+ARG WORKSPACE=docker_simulation_ws
 WORKDIR /home/ros/${WORKSPACE}
 RUN sudo usermod -a -G render,avahi,video ${USERNAME}
 RUN echo "source /opt/ros/${DISTRO}/setup.bash" >> ~/.bashrc
 
 RUN echo "if [ -f ~/${WORKSPACE}/install/setup.bash ]; then source ~/${WORKSPACE}/install/setup.bash; fi" >> /home/ros/.bashrc
-RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/humble/lib/" >> ~/.bashrc
+RUN echo "export GZ_SIM_SYSTEM_PLUGIN_PATH=/opt/ros/${DISTRO}/lib/" >> ~/.bashrc
 RUN sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 
 
-ENTRYPOINT ["/ros_entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 # RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 # RUN echo "source /home/ros/ros2_ws/install/setup.bash 2>/dev/null || true" >> ~/.bashrc
