@@ -11,7 +11,7 @@ IMAGE_TAG=0.1
 USERNAME=ros
 USER_UID="$(id -u $USER)"
 USER_GID="$(id -g $USER)"
-WORKSPACE=docker_simulation_ws
+WORKSPACE=melfa_jazzy_ws
 
 # =============================== Help Function ============================== #
 
