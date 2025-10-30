@@ -5,13 +5,13 @@ DISTRO=jazzy
 # Change these values to use different versions of ROS or different base images. The rest of the script should be left unchanged.
 BASE_IMAGE=osrf/ros
 BASE_TAG=$DISTRO-desktop-full
-IMAGE_NAME=docker_control_simulation
+IMAGE_NAME=gazebo_harmonic
 IMAGE_TAG=0.1
 
 USERNAME=ros
 USER_UID="$(id -u $USER)"
 USER_GID="$(id -g $USER)"
-WORKSPACE=docker_simulation_ws
+WORKSPACE=melfa_jazzy_ws
 
 # =============================== Help Function ============================== #
 
