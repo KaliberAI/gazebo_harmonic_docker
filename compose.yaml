@@ -9,7 +9,7 @@ services:
         - DISTRO=jazzy
         - IMAGE_NAME=gazebo_harmonic
         - IMAGE_TAG=0.1
-        - WORKSPACE=docker_simulation_ws
+        - WORKSPACE=melfa_jazzy_ws
 
     container_name: ros2_jammy_simulator
     network_mode: "host"
@@ -40,7 +40,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - ~/.bash_history:/home/ros/.bash_history
-      - ~/melfa_jazzy_ws:/home/ros/docker_simulation_ws
+      - ~/melfa_jazzy_ws:/home/ros/melfa_jazzy_ws
       - /dev/input:/dev/input
       - /dev/dri:/dev/dri
       - /dev/nvidia0:/dev/nvidia0

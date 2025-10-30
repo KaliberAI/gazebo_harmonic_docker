@@ -108,7 +108,7 @@ RUN pipx install numpy
 RUN sudo ln -s /usr/include/eigen3/Eigen /usr/include/Eigen
 
 # Set up auto-source for ros user
-ARG WORKSPACE=docker_simulation_ws
+ARG WORKSPACE=melfa_jazzy_ws
 WORKDIR /home/ros/${WORKSPACE}
 RUN sudo usermod -a -G render,avahi,video ${USERNAME}
 
